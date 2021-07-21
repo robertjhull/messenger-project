@@ -33,17 +33,20 @@ class Input extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
-    // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
-    const reqBody = {
-      text: event.target.text.value,
-      recipientId: this.props.otherUser.id,
-      conversationId: this.props.conversationId,
-      sender: this.props.conversationId ? null : this.props.user,
-    };
-    await this.props.postMessage(reqBody);
-    this.setState({
-      text: "",
-    });
+    // check if string is empty or only contains whitespace
+    if (this.state.text.trim()) {
+      // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
+      const reqBody = {
+        text: event.target.text.value,
+        recipientId: this.props.otherUser.id,
+        conversationId: this.props.conversationId,
+        sender: this.props.conversationId ? null : this.props.user,
+      };
+      await this.props.postMessage(reqBody);
+      this.setState({
+        text: "",
+      });
+    }
   };
 
   render() {
