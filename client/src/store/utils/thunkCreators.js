@@ -4,6 +4,7 @@ import {
   gotConversations,
   addConversation,
   setNewMessage,
+  setReadStatus,
   setSearchedUsers,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
@@ -89,6 +90,22 @@ const sendMessage = (data, body) => {
     recipientId: body.recipientId,
     sender: data.sender,
   });
+};
+
+const updateMessages = async (body) => {
+  const { data } = await axios.put("/api/messages", body);
+  return data;
+}
+
+export const updateReadStatus = (body) => async (dispatch) => {
+  try {
+    updateMessages(body)
+    .then(data => {
+      dispatch(setReadStatus(body.conversationId, body.senderId));
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // message format to send: {recipientId, text, conversationId}

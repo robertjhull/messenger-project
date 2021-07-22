@@ -24,6 +24,24 @@ export const addMessageToStore = (state, payload) => {
   });
 };
 
+export const updateMessageReadStatus = (state, payload) => {
+  const { conversationId, senderId } = payload;
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const convoCopy = { ...convo };
+      convoCopy.messages.map((message) => {
+        if (message.senderId === senderId) {
+          message.isRead = true;
+        }
+        return message;
+      })
+      return convoCopy;
+    } else {
+      return convo;
+    }
+  })
+}
+
 export const addOnlineUserToStore = (state, id) => {
   return state.map((convo) => {
     if (convo.otherUser.id === id) {

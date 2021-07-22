@@ -43,4 +43,22 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// expects {conversationId, senderId} in body
+router.put("/", async (req, res, next) => {
+  try {
+    const { conversationId, senderId } = req.body;
+    const [numberOfMessagesUpdated, messagesUpdated] = await Message.update({
+      isRead : true 
+    }, {
+      where : { 
+        senderId : senderId,
+        conversationId : conversationId
+      }
+    }); 
+    res.json({ numberOfMessagesUpdated, messagesUpdated })
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = router;
