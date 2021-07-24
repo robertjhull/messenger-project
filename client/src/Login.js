@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
     flex: "1 1 40%",
   },
   imageLayer : {
-    backgroundColor: "#3a8cffba", 
+    background: "linear-gradient(#3A8DFFD9, #86B9FFD9)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -56,8 +56,8 @@ const useStyles = makeStyles(() => ({
     marginLeft: "10%",
   },
   registerWrapper : {
-    top: 20,
-    right: 20,
+    top: 30,
+    right: 40,
     position: "relative",
     display: "flex",
     justifyContent: "flex-end",
@@ -125,7 +125,7 @@ const Login = (props) => {
                 fullWidth="true"
                 color="primary"
                 onClick={() => history.push("/register")}>
-                  Register
+                  Create Account
               </Button>
             </Box>
           </Grid>
