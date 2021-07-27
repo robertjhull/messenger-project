@@ -23,32 +23,29 @@ const styles = {
 class Chat extends Component {
   handleClick = async (conversation) => {
     await this.props.setActiveChat(conversation.otherUser.username);
+    await this.updateConversationUnread(conversation);
+  };
+
+  updateConversationUnread = async (conversation) => {
     // checks if conversation is already read to avoid extra api calls
-    if (this.containsUnreadMessages(conversation)) {
+    if (conversation.totalUnread) {
       await this.props.updateReadStatus({
         conversationId: conversation.id,
         senderId: conversation.otherUser.id
       });
     }
-  };
-
-  containsUnreadMessages = (conversation) => {
-    return conversation.messages.some((message) => 
-      conversation.otherUser.id === message.senderId && !message.isRead
-    );
   }
 
-  getUnread = (conversation, userId) => {
-    return conversation.messages.filter((message) => 
-      message.senderId !== userId && !message.isRead).length;
+  componentDidUpdate(prevProps) {
+    // automatically update read status if active conversation receives a new message
+    if (this.props.activeConversation && prevProps.activeConversation === this.props.activeConversation) {
+      this.updateConversationUnread(this.props.conversation);
+    }
   }
 
   render() {
-    const { classes, conversation, user } = this.props;
-
-    const userId = user.id;
-    const otherUser = conversation.otherUser;
-    const unread = this.getUnread(conversation, userId);
+    const { classes, conversation } = this.props;
+    const { otherUser, totalUnread } = conversation;
     
     return (
       <Box
@@ -61,14 +58,14 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={conversation} unread={unread} />
+        <ChatContent conversation={conversation} unread={totalUnread} />
       </Box>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  return { user: state.user };
+  return { activeConversation: state.activeConversation };
 }
 
 const mapDispatchToProps = (dispatch) => {

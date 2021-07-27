@@ -28,7 +28,7 @@ router.post("/", async (req, res, next) => {
         user1Id: senderId,
         user2Id: recipientId,
       });
-      if (onlineUsers.includes(sender.id)) {
+      if (onlineUsers[sender.id]) {
         sender.online = true;
       }
     }
@@ -46,8 +46,11 @@ router.post("/", async (req, res, next) => {
 // expects {conversationId, senderId} in body
 router.put("/", async (req, res, next) => {
   try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
     const { conversationId, senderId } = req.body;
-    const [numberOfMessagesUpdated, messagesUpdated] = await Message.update({
+    await Message.update({
       isRead : true 
     }, {
       where : { 
@@ -55,7 +58,7 @@ router.put("/", async (req, res, next) => {
         conversationId : conversationId
       }
     }); 
-    res.json({ numberOfMessagesUpdated, messagesUpdated })
+    res.sendStatus(204);
   } catch (error) {
     next(error)
   }
