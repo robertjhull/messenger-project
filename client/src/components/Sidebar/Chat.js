@@ -3,6 +3,7 @@ import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
+import { updateReadStatus } from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
 
 const styles = {
@@ -22,14 +23,33 @@ const styles = {
 class Chat extends Component {
   handleClick = async (conversation) => {
     await this.props.setActiveChat(conversation.otherUser.username);
+    await this.updateConversationUnread(conversation);
   };
 
+  updateConversationUnread = async (conversation) => {
+    // checks if conversation is already read to avoid extra api calls
+    if (conversation.totalUnread) {
+      await this.props.updateReadStatus({
+        conversationId: conversation.id,
+        senderId: conversation.otherUser.id
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    // automatically update read status if active conversation receives a new message
+    if (this.props.activeConversation && prevProps.activeConversation === this.props.activeConversation) {
+      this.updateConversationUnread(this.props.conversation);
+    }
+  }
+
   render() {
-    const { classes } = this.props;
-    const otherUser = this.props.conversation.otherUser;
+    const { classes, conversation } = this.props;
+    const { otherUser, totalUnread } = conversation;
+    
     return (
       <Box
-        onClick={() => this.handleClick(this.props.conversation)}
+        onClick={() => this.handleClick(conversation)}
         className={classes.root}
       >
         <BadgeAvatar
@@ -38,10 +58,14 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} />
+        <ChatContent conversation={conversation} unread={totalUnread} />
       </Box>
     );
   }
+}
+
+const mapStateToProps = (state) => {
+  return { activeConversation: state.activeConversation };
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -49,7 +73,10 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
+    updateReadStatus: (conversationId) => {
+      dispatch(updateReadStatus(conversationId));
+    }
   };
 };
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(Chat));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Chat));
