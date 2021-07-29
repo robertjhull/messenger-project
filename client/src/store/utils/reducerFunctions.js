@@ -32,10 +32,12 @@ export const updateMessageReadStatus = (state, payload) => {
   return state.map((convo) => {
     if (convo.id === conversationId) {
       const convoCopy = { ...convo };
+      const sentByUser = convoCopy.otherUser.id !== senderId;
       const messagesCopy = convo.messages.map((message) => {
         if (message.senderId === senderId) {
           const msgCopy = { ...message };
           msgCopy.isRead = true;
+          if (sentByUser) convoCopy.lastReadMessageId = msgCopy.id;
           return msgCopy;
         } else {
           return message;
