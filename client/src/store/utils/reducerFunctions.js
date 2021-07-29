@@ -119,5 +119,5 @@ export const sortMessagesDesc = (state) => {
       return 0;
     })
     return convoCopy;
-  })
-} 
+  });
+};
