@@ -4,7 +4,7 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { updateReadStatus } from "../../store/utils/thunkCreators";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -20,20 +20,24 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Chat = (props) => {
+const Chat = ({ conversation }) => {
   const classes = useStyles();
-  const { conversation } = props;
+  const dispatch = useDispatch();
   const { otherUser, totalUnread } = conversation;
 
+  const activeConversation = useSelector((state) => state.activeConversation);
+  const setActiveConvo = (id) => dispatch(setActiveChat(id));
+  const setReadStatus = (conversationId) => dispatch(updateReadStatus(conversationId));
+
   const handleClick = async (conversation) => {
-    await props.setActiveChat(conversation.otherUser.username);
+    setActiveConvo(conversation.otherUser.username);
     await updateConversationUnread(conversation);
   };
 
   const updateConversationUnread = async(conversation) => {
     // checks if conversation is already read to avoid extra api calls
     if (conversation.totalUnread) {
-      await props.updateReadStatus({
+      setReadStatus({
         conversationId: conversation.id,
         senderId: conversation.otherUser.id
       });
@@ -41,7 +45,7 @@ const Chat = (props) => {
   }
 
   useEffect(() => {
-    const activeConvo = props.activeConversation ?? "";
+    const activeConvo = activeConversation ?? "";
     if (activeConvo === otherUser.username) {
       updateConversationUnread(conversation);
     }
@@ -63,19 +67,4 @@ const Chat = (props) => {
   );
 }
 
-const mapStateToProps = (state) => {
-  return { activeConversation: state.activeConversation };
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setActiveChat: (id) => {
-      dispatch(setActiveChat(id));
-    },
-    updateReadStatus: (conversationId) => {
-      dispatch(updateReadStatus(conversationId));
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default Chat;

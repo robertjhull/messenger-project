@@ -40,6 +40,7 @@ const Search = ({ handleChange }) => {
           classes={{ root: classes.filledInput, input: classes.input }}
           disableUnderline
           placeholder="Search"
+          autoComplete="off"
           startAdornment={
             <InputAdornment position="start">
               <SearchIcon />
