@@ -1,12 +1,12 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { updateReadStatus } from "../../store/utils/thunkCreators";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-const styles = {
+const useStyles = makeStyles(() => ({
   root: {
     borderRadius: 8,
     height: 80,
@@ -18,65 +18,53 @@ const styles = {
       cursor: "grab",
     },
   },
-};
+}));
 
-class Chat extends Component {
-  handleClick = async (conversation) => {
-    await this.props.setActiveChat(conversation.otherUser.username);
-    await this.updateConversationUnread(conversation);
+const Chat = ({ conversation }) => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const { otherUser, totalUnread } = conversation;
+
+  const activeConversation = useSelector((state) => state.activeConversation);
+  const setActiveConvo = (id) => dispatch(setActiveChat(id));
+  const setReadStatus = (conversationId) => dispatch(updateReadStatus(conversationId));
+
+  const handleClick = async (conversation) => {
+    setActiveConvo(conversation.otherUser.username);
+    await updateConversationUnread(conversation);
   };
 
-  updateConversationUnread = async (conversation) => {
+  const updateConversationUnread = async(conversation) => {
     // checks if conversation is already read to avoid extra api calls
     if (conversation.totalUnread) {
-      await this.props.updateReadStatus({
+      setReadStatus({
         conversationId: conversation.id,
         senderId: conversation.otherUser.id
       });
     }
   }
 
-  componentDidUpdate(prevProps) {
-    // automatically update read status if active conversation receives a new message
-    if (this.props.activeConversation && prevProps.activeConversation === this.props.activeConversation) {
-      this.updateConversationUnread(this.props.conversation);
+  useEffect(() => {
+    const activeConvo = activeConversation ?? "";
+    if (activeConvo === otherUser.username) {
+      updateConversationUnread(conversation);
     }
-  }
+  }, [conversation]);
 
-  render() {
-    const { classes, conversation } = this.props;
-    const { otherUser, totalUnread } = conversation;
-    
-    return (
-      <Box
-        onClick={() => this.handleClick(conversation)}
-        className={classes.root}
-      >
-        <BadgeAvatar
-          photoUrl={otherUser.photoUrl}
-          username={otherUser.username}
-          online={otherUser.online}
-          sidebar={true}
-        />
-        <ChatContent conversation={conversation} unread={totalUnread} />
-      </Box>
-    );
-  }
+  return (
+    <Box
+      onClick={() => handleClick(conversation) }
+      className={classes.root}
+    >
+      <BadgeAvatar
+        photoUrl={otherUser.photoUrl}
+        username={otherUser.username}
+        online={otherUser.online}
+        sidebar={true}
+      />
+      <ChatContent conversation={conversation} unread={totalUnread} />
+    </Box>
+  );
 }
 
-const mapStateToProps = (state) => {
-  return { activeConversation: state.activeConversation };
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setActiveChat: (id) => {
-      dispatch(setActiveChat(id));
-    },
-    updateReadStatus: (conversationId) => {
-      dispatch(updateReadStatus(conversationId));
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Chat));
+export default Chat;
