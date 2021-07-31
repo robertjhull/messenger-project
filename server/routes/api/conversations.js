@@ -62,7 +62,7 @@ router.get("/", async (req, res, next) => {
       }
 
       // set property for online status of the other user
-      if (onlineUsers.includes(convoJSON.otherUser.id)) {
+      if (onlineUsers[convoJSON.otherUser.id]) {
         convoJSON.otherUser.online = true;
       } else {
         convoJSON.otherUser.online = false;
@@ -70,7 +70,19 @@ router.get("/", async (req, res, next) => {
 
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[0].text;
+      convoJSON.totalUnread = convoJSON.messages.filter(message => 
+        !message.isRead && message.senderId === convoJSON.otherUser.id).length;
       conversations[i] = convoJSON;
+
+      // set property for last read message by other user
+      const getLastReadId = (messages) => {
+        for (let msg of messages) {
+          if (msg.isRead && msg.senderId === userId) return msg.id
+        }
+        return -1;
+      }
+      convoJSON.lastReadMessageId = getLastReadId(convoJSON.messages);
+
     }
 
     res.json(conversations);

@@ -6,6 +6,7 @@ export const addMessageToStore = (state, payload) => {
       id: message.conversationId,
       otherUser: sender,
       messages: [message],
+      totalUnread: 1
     };
     newConvo.latestMessageText = message.text;
     return [newConvo, ...state];
@@ -14,9 +15,11 @@ export const addMessageToStore = (state, payload) => {
   return state.map((convo) => {
     if (convo.id === message.conversationId) {
       const convoCopy = { ...convo };
-      convoCopy.messages.unshift(message);
+      convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
-
+      if (message.senderId === convo.otherUser.id) {
+        convoCopy.totalUnread = (convoCopy.totalUnread ?? 0) + 1;
+      }
       return convoCopy;
     } else {
       return convo;
@@ -29,12 +32,19 @@ export const updateMessageReadStatus = (state, payload) => {
   return state.map((convo) => {
     if (convo.id === conversationId) {
       const convoCopy = { ...convo };
-      convoCopy.messages.map((message) => {
+      const sentByUser = convoCopy.otherUser.id !== senderId;
+      const messagesCopy = convo.messages.map((message) => {
         if (message.senderId === senderId) {
-          message.isRead = true;
+          const msgCopy = { ...message };
+          msgCopy.isRead = true;
+          if (sentByUser) convoCopy.lastReadMessageId = msgCopy.id;
+          return msgCopy;
+        } else {
+          return message;
         }
-        return message;
       })
+      convoCopy.messages = [ ...messagesCopy];
+      convoCopy.totalUnread = 0;
       return convoCopy;
     } else {
       return convo;
@@ -97,5 +107,17 @@ export const addNewConvoToStore = (state, recipientId, message) => {
     } else {
       return convo;
     }
+  });
+};
+
+export const sortMessagesDesc = (state) => {
+  return state.map((convo) => {
+    const convoCopy = { ...convo };
+    convoCopy.messages.sort((a, b) => {
+      if (a.createdAt < b.createdAt) return -1;
+      if (a.createdAt > b.createdAt) return 1;
+      return 0;
+    })
+    return convoCopy;
   });
 };
