@@ -7,8 +7,13 @@ export const theme = createTheme({
     button: {
       textTransform: "none",
       letterSpacing: 0,
-      fontWeight: "bold"
-    }
+      fontWeight: "bold",
+      height: 56,
+      width: 160,
+      boxShadow: `0px 2px 1px -2px rgb(0 0 0 / 6%), 
+                  0px 2px 6px 0px rgb(0 0 0 / 7%), 
+                  0px 1px 4px 0px rgb(0 0 0 / 6%)`
+    },
   },
   overrides: {
     MuiInput: {
@@ -18,7 +23,11 @@ export const theme = createTheme({
     }
   },
   palette: {
-    primary: { main: "#3A8DFF" },
-    secondary: { main: "#B0B0B0" }
-  }
+    primary:   { main: "#3A8DFF" },
+    secondary: { main: "#B0B0B0" },
+    fade: {
+      main: "#3A8DFFD9", 
+      light: "#86B9FFD9", 
+    }
+  },
 });
