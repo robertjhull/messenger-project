@@ -8,9 +8,6 @@ import { useHistory } from "react-router-dom";
 import { theme } from "../../themes/theme";
 
 const useStyles = makeStyles((theme) => ({
-    headerText : {
-        fontSize: ".9rem",
-    },
     headerBtn : {
         margin: "30px 40px 30px 20px",
         color: `${theme.palette.primary.main}`,
@@ -29,27 +26,17 @@ const FormHeader = ({ loginPage }) => {
             justifyContent="flex-end"
             alignItems="center"
           >
-            <Typography color="textSecondary" className={classes.headerText}>
+            <Typography color="textSecondary" variant="subtitle1">
                 {loginPage ? "Don't have an account?" : "Already have an account?" }
             </Typography>
             
-            {loginPage ? (
-              <Button 
-                size="large"
-                className={classes.headerBtn}
-                onClick={() => history.push("/register")}
-              >
-                Create Account
-              </Button>
-            ) : (
-              <Button 
-                size="large"
-                className={classes.headerBtn}
-                onClick={() => history.push("/login")}
-              >
-                Login
-              </Button>
-            )}
+            <Button 
+               size="large"
+               className={classes.headerBtn}
+               onClick={() => history.push(loginPage ? "/register" : "/login")}
+            >
+              {loginPage ? "Create Account" : "Login" }
+            </Button>
         </Grid>
     )
 } 

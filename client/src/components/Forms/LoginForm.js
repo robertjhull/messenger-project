@@ -10,9 +10,7 @@ import {
 } from "@material-ui/core";
 import { login } from "../../store/utils/thunkCreators";
 
-const Login = (props) => {
-    const { user, login, classes } = props;
-  
+const Login = ({ user, login, classes }) => {
     const handleLogin = async (event) => {
       event.preventDefault();
       const username = event.target.username.value;
@@ -28,7 +26,7 @@ const Login = (props) => {
     return (
       <Grid className={classes.form}>
         <form onSubmit={handleLogin}>
-          <Typography className={classes.title}>Welcome back!</Typography>
+          <Typography variant="h4">Welcome back!</Typography>
           <Grid>
               <FormControl className={classes.formGroup} required>
                 <TextField

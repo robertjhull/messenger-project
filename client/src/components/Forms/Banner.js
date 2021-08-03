@@ -13,13 +13,13 @@ const useStyles = makeStyles((theme) => ({
     background: `linear-gradient(${theme.palette.fade.main}, ${theme.palette.fade.light}), url(${background}) repeat`,
     backgroundSize: "cover",
     height: "100vh",
-    color: "#fff",
+    color: theme.palette.secondary.light,
     textAlign: "center",
   },
   imageText : {
     width: "70%",
     fontSize: "1.8rem",
-    margin: "40px 0"
+    margin: theme.spacing(5, 0),
   },
 }));
 
@@ -36,7 +36,7 @@ const Banner = () => {
             justifyContent="center"
             alignItems="center"
         >
-            <img src={bubbleSVG} alt=""></img>
+            <img src={bubbleSVG} alt="Text bubble icon"></img>
             <Typography className={classes.imageText}>
                 Converse with anyone with any language.
             </Typography>

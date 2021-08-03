@@ -10,7 +10,7 @@ import Banner from "./components/Forms/Banner";
 import FormHeader from "./components/Forms/FormHeader";
 import { theme } from "./themes/theme";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root : {
     minHeight: "100vh",
     flexWrap: "wrap-reverse",
@@ -19,19 +19,15 @@ const useStyles = makeStyles(() => ({
     minHeight: "100vh",
   },
   form : {
-    marginTop: "8%",
+    marginTop: theme.spacing(10),
     width: "60%",
   },
-  title : {
-      fontSize: "1.9rem",
-      fontWeight: "bolder",
-  },
   formGroup : {
-      width: "100%",
-      margin: "20px 0",
+    width: "100%",
+    margin: "20px 0",
   },
   btnWrapper: {
-    marginTop: "5%",
+    marginTop: theme.spacing(3),
   }
 }));
 

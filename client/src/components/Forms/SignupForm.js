@@ -38,7 +38,7 @@ const SignupForm = (props) => {
     return (
       <Box className={classes.form}>
         <form onSubmit={handleRegister}>
-          <Typography className={classes.title}>Create an account.</Typography>
+          <Typography variant="h4">Create an account.</Typography>
           <Grid>
               <Grid>
               <FormControl className={classes.formGroup}>
