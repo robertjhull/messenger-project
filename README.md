@@ -52,3 +52,11 @@ In a separate terminal, start the back end:
 cd server
 npm run dev
 ```
+
+## Demo
+
+Login and registration:
+![messengerlogin](https://user-images.githubusercontent.com/67487694/130697735-a2675223-275b-48aa-961c-a08c02ec0ce4.png)
+
+Chat:
+![messengerchat](https://user-images.githubusercontent.com/67487694/130697748-8de230bc-0beb-449b-8656-b133c7846095.png)
